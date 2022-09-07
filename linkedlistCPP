@@ -1,0 +1,238 @@
+//Work in progress
+//Working with pointers and merge sorting by reassigning pointers
+/* 
+ * File:   main.cpp
+ * Author: adamcaruso
+ *
+ * Created on August 27, 2022, 8:20 PM
+ */
+#include<limits>
+#include<cstdlib>
+#include<iostream>
+using namespace std;
+#include<string.h>
+#include<stdio.h>
+
+
+
+    
+    struct node { //create node with 4 characters and the word length to be stored as data
+    public:
+        char data[4];
+        int wordlength;
+        node* next;
+    };
+    
+    class linkedlist
+    {
+    private:    
+    node* n; //next
+    node* t; //temp
+    node* h; //head
+    public:
+    linkedlist()
+    {
+        h = NULL; 
+        t = NULL;
+        
+    }
+    void getinput()
+    {
+        string sentence;
+        string currentword;
+        int charcount;
+        cout << "Please input a sentence: ";
+        getline (cin, sentence);
+        sentence = sentence + ' ';
+  
+        for (int i = 0; i <= sentence.length(); i++) //iterate through the characters in the string
+        {
+           
+            currentword = currentword + sentence[i]; //add each character to the word
+            
+            if (sentence[i] == ' ') //break words up at space character
+            {
+                charcount = currentword.length() - 1; // character count
+                addnode(currentword, charcount); //call function to add the data to the list
+                currentword.clear(); //clear the current word
+            }
+        }
+    }
+        void addnode(string word, int length) //add node taking the word and length of the word as input
+        {
+            node* n = new node();
+            for (int i = 0; i < 4; i++)  //push first 4 characters of node as data
+            {
+              n->data[i] = word[i];
+            }
+            n->wordlength = length;  //length assigned as word length
+            n->next = NULL; //next points to end of list
+            
+            if (h == NULL) //if the head is not yet assigned, initialize to n
+            {
+                h = n;
+                t = n;
+            }
+            else
+            {
+                t->next = n; //move temp to create the links
+                t = t->next;
+            }
+            return;
+        }
+        void printdata()
+        {
+            node* temp = new node;  //temp assigned to start at the head
+            temp = h;
+            while (temp != NULL) //iterate through entire list and print the data and wordlength in each node
+            { 
+               
+                cout << temp->data << " " << temp->wordlength << "\n";
+                temp = temp->next;
+            }
+            return;
+        }
+        node* midPoint(node* c)
+        {
+            node* s = new node;
+            s = c;
+            node* f = new node;
+            f = c->next;
+            
+            while(f != NULL and f->next != NULL)
+            {
+                s = s->next;
+                f = f->next->next;
+            }
+            return s;
+        }
+        node* merge(node* a, node* b)
+        {
+            node* d = new node;
+            
+            while (a != NULL and b !=NULL)
+            {
+                if (a->data < b->data)
+                {
+                    d->next = a;
+                    a = a->next;
+                }
+                else
+                {
+                    d->next = b;
+                    b = b->next;
+                }
+                d = d->next;
+            }
+            if (a != NULL)
+            {
+                d->next = a;
+            }
+            if (b != NULL)
+            {
+                d->next = b;
+            }
+            return d->next;
+        }
+        void sortlist(node* headr) // reassess code
+        {
+            
+            node* mid = new node;
+            mid = midPoint(headr);
+            
+            node* first = new node;
+            first = headr; //break at the mid
+            node* second =new node;
+            second = mid->next;
+            mid->next = NULL;
+            if(headr != NULL or headr->next != NULL)
+            {
+               sortlist(first); //recursive sort
+               sortlist(second);
+            }
+            merge(first, second); //merge
+        }
+        void sortlinks()
+        {
+            cout << "here";
+            node* headref = new node;
+            headref = h;
+            sortlist(headref);
+        }
+        void searchlist()
+        {
+            string searchword;
+            char tempword[4];
+            node* comp = new node;
+            comp = h;
+            
+            cout << "Please input the word you would like to search for: \n";
+            getline (cin, searchword);
+            
+            
+            for (int i = 0; i < 4; i++)
+            {
+                tempword[i] = searchword[i];
+            }
+            while (comp != NULL)
+            {
+                
+                if (comp->data == tempword)
+                {
+                    cout << "Entry found: " << comp->data << " word length " << comp->wordlength;
+                }
+                else
+                {
+                    cout << "not found at: " << comp->data << "\n";
+                    comp = comp->next;
+                }
+            }
+        }
+    };
+    int menu()
+    {
+    int selection;
+
+    cout << "Please make a selection:\n";
+    cout << "1: Input a sentence to create list.\n";
+    cout << "2: Print the current list.\n";
+    cout << "3: Sort the list of words.\n";
+    cout << "4: Search for a word.\n";
+    cout << "5: Delete an entry.\n";
+    
+    cin >> selection;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    
+    return selection;
+    }
+    
+int main(int argc, char** argv) 
+{
+    linkedlist a; 
+    int select = 1;
+    
+    while (select < 6 and select > 0)
+    {
+        select = menu();
+        if (select == 1)
+        {
+            a.getinput();
+        }
+
+    
+         if (select == 2)
+         {
+            a.printdata(); //call function to print data in the list
+         }
+        if (select == 3)
+        {
+            a.sortlinks();
+        }
+        if (select == 4)
+        {
+            a.searchlist();
+        }
+    }
+    return 0;
+}
+
